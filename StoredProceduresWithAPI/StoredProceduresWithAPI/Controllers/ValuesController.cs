@@ -16,9 +16,33 @@ namespace StoredProceduresWithAPI.Controllers
         SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["webapi_conn"].ConnectionString);
         Employee emp = new Employee();
         // GET api/values
-        public IEnumerable<string> Get()
+        public List<Employee> Get()
         {
-            return new string[] { "value1", "value2" };
+            SqlDataAdapter da = new SqlDataAdapter("usp_GetAllEmployees", con);
+            da.SelectCommand.CommandType = CommandType.StoredProcedure;
+            DataTable dt = new DataTable();
+            da.Fill(dt);
+            List<Employee> lstEmployee = new List<Employee>();
+            if (dt.Rows.Count > 0)
+            {
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    Employee emp = new Employee();
+                    emp.Name = dt.Rows[i]["Name"].ToString();
+                    emp.Id = Convert.ToInt32(dt.Rows[i]["Id"]);
+                    emp.Age = Convert.ToInt32(dt.Rows[i]["Age"]);
+                    emp.Active = Convert.ToInt32(dt.Rows[i]["Active"]);
+                    lstEmployee.Add(emp);
+                }
+            }
+            if (lstEmployee.Count > 0)
+            {
+                return lstEmployee;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         // GET api/values/5
