@@ -46,9 +46,33 @@ namespace StoredProceduresWithAPI.Controllers
         }
 
         // GET api/values/5
-        public string Get(int id)
+        public Employee Get(int id)
         {
-            return "value";
+            SqlDataAdapter da = new SqlDataAdapter("usp_GetAEmployeeByID", con);
+            da.SelectCommand.CommandType = CommandType.StoredProcedure;
+            da.SelectCommand.Parameters.AddWithValue("@id", id);
+            DataTable dt = new DataTable();
+            da.Fill(dt);
+            Employee emp = new Employee();
+
+            if (dt.Rows.Count > 0)
+            {
+
+                emp.Name = dt.Rows[0]["Name"].ToString();
+                emp.Id = Convert.ToInt32(dt.Rows[0]["Id"]);
+                emp.Age = Convert.ToInt32(dt.Rows[0]["Age"]);
+                emp.Active = Convert.ToInt32(dt.Rows[0]["Active"]);
+
+
+            }
+            if (emp != null)
+            {
+                return emp;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         // POST api/values
