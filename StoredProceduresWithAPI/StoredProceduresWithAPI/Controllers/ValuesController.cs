@@ -106,8 +106,33 @@ namespace StoredProceduresWithAPI.Controllers
         }
 
         // PUT api/values/5
-        public void Put(int id, [FromBody] string value)
+        public string Put(int id, Employee employee)
         {
+            string msg = "";
+            if (employee != null)
+            {
+                SqlCommand cmd = new SqlCommand("usp_UpdateEmployee", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Id", id);
+                cmd.Parameters.AddWithValue("@Name", employee.Name);
+                cmd.Parameters.AddWithValue("@Age", employee.Age);
+                cmd.Parameters.AddWithValue("@Active", employee.Active);
+
+                con.Open();
+                int i = cmd.ExecuteNonQuery();
+                con.Close();
+
+                if (i > 0)
+                {
+                    msg = "Data has been updated";
+                }
+                else
+                {
+                    msg = "Error";
+                }
+
+            }
+            return msg;
         }
 
         // DELETE api/values/5
