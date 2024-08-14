@@ -136,8 +136,26 @@ namespace StoredProceduresWithAPI.Controllers
         }
 
         // DELETE api/values/5
-        public void Delete(int id)
+        public string Delete(int id)
         {
+            string msg = "";
+            SqlCommand cmd = new SqlCommand("usp_DeleteEmployee", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Id", id);
+
+            con.Open();
+            int i = cmd.ExecuteNonQuery();
+            con.Close();
+
+            if (i > 0)
+            {
+                msg = "Data has been deleted";
+            }
+            else
+            {
+                msg = "Error";
+            }
+            return msg;
         }
     }
 }
